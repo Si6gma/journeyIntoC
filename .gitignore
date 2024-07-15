@@ -1,2 +1,4 @@
 .vscode
 basics.dSYM/
+.DS_Store
+*.dSYM
