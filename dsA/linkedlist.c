@@ -107,14 +107,12 @@ void deleteNodeByPosition(struct Node **head, int nodePosition)
 
 void deleteNodeByPointer(struct Node **head, struct Node *nodeToDelete)
 {
-    // Edge Case: Handle empty list or NULL node to delete
     if (*head == NULL || nodeToDelete == NULL)
     {
         printf("Invalid operation: List is empty or node to delete is NULL.\n");
         return;
     }
 
-    // Edge Case: Handle deletion of the head node
     if (*head == nodeToDelete)
     {
         *head = nodeToDelete->link;
@@ -123,13 +121,11 @@ void deleteNodeByPointer(struct Node **head, struct Node *nodeToDelete)
     }
 
     struct Node *current = *head;
-
     while (current != NULL && current->link != nodeToDelete)
     {
         current = current->link;
     }
 
-    // Edge Case: Unlink and free the node if found, else print error
     if (current != NULL && current->link == nodeToDelete)
     {
         current->link = nodeToDelete->link;
@@ -331,10 +327,11 @@ void deleteList(struct Node **head)
     while (*head != NULL)
     {
         temp = *head;
-        free(temp);
+        *head = (*head)->link; // Move the head pointer to the next node
+        free(temp);            // Free the node
     }
 
-    // Edge Case: After deletion, ensure the head pointer is set to NULL
+    // After deletion, ensure the head pointer is set to NULL
     *head = NULL;
 }
 
@@ -376,13 +373,13 @@ int main()
 {
     struct Node *node1 = NULL;
 
-    insertNode(node1, 10, 0);
-    insertNode(node1, 60, 0);
-    insertNode(node1, 30, 0);
-    insertNode(node1, 20, 0);
-    insertNode(node1, 40, 0);
-    insertNode(node1, 50, 0);
-    insertNode(node1, 5, 0);
+    insertNode(&node1, 10, 0);
+    insertNode(&node1, 60, 0);
+    insertNode(&node1, 30, 0);
+    insertNode(&node1, 20, 0);
+    insertNode(&node1, 40, 0);
+    insertNode(&node1, 50, 0);
+    insertNode(&node1, 5, 0);
     sortList(&node1);
     printList(node1);
 
@@ -398,6 +395,6 @@ int main()
     printList(node1);
 
     deleteList(&node1);
-    printf("\n");
+    // printf("\n");
     return 0;
 }

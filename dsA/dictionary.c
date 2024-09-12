@@ -320,11 +320,11 @@ int main()
     initializeAlphaList(&alphaHead, words, numOfWords);
 
     sortAlpha(&alphaHead);
-    printf("Array: \n\n");
+    printf("\nArray: \n\n");
     for (int i = 0; i < numOfWords; i++)
         printf("%s, ", words[i]);
 
-    printf("\n\n    List: \n\n");
+    printf("\n\nList: \n\n");
     printAlpha(alphaHead);
     deleteAlpha(&alphaHead);
 
