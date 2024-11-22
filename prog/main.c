@@ -56,7 +56,6 @@ typedef struct
     userShoppingState shopping;
 } User;
 
-// Function Prototypes
 void clearScreen();
 void pauseScreen();
 void displayBoxInfo(Box *box);
@@ -67,7 +66,6 @@ void entertainmentMenu(Box *box, User *user);
 void shoppingMenu(Box *box, User *user);
 void handleUserActivity(Box *box, User *user);
 
-// Main Function
 int main()
 {
     Box box = {BOX_READY, 0};
@@ -119,7 +117,6 @@ void displayBoxInfo(Box *box)
     printf("Connected Users: %d\n", box->connectedUsers);
 }
 
-// Display User Info
 void displayUserInfo(User *user)
 {
     printf("User ID: %d\n", user->id);
@@ -189,7 +186,6 @@ void displayUserInfo(User *user)
     }
 }
 
-// Main Menu
 void mainMenu(Box *box, User *user)
 {
     int choice;
@@ -199,7 +195,7 @@ void mainMenu(Box *box, User *user)
     printf("2. Exit\n");
     printf("\nEnter your choice: ");
     scanf("%d", &choice);
-    getchar(); // Consume newline
+    getchar();
 
     if (choice == 1)
     {
@@ -216,7 +212,6 @@ void mainMenu(Box *box, User *user)
     }
 }
 
-// User Menu
 void userMenu(Box *box, User *user)
 {
     int choice;
@@ -230,7 +225,7 @@ void userMenu(Box *box, User *user)
         printf("3. Return to Main Menu\n");
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
-        getchar(); // Consume newline
+        getchar();
 
         if (choice == 1)
         {
@@ -249,7 +244,7 @@ void userMenu(Box *box, User *user)
                 if (activity == 1)
                 {
                     user->activity = USER_ACTIVITY_ENTERTAINMENT;
-                    user->entertainment = USER_ENTERTAINMENT_PLAYING; // Set initial state to PLAYING
+                    user->entertainment = USER_ENTERTAINMENT_PLAYING;
                     entertainmentMenu(box, user);
                 }
                 else if (activity == 2)
@@ -293,7 +288,6 @@ void userMenu(Box *box, User *user)
     } while (1);
 }
 
-// Entertainment Menu
 void entertainmentMenu(Box *box, User *user)
 {
     int choice;
@@ -305,7 +299,7 @@ void entertainmentMenu(Box *box, User *user)
         printf("\n1. Play\n2. Pause\n3. Forward\n4. Reverse\n5. Stop Entertainment\n");
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
-        getchar(); // Consume newline
+        getchar();
 
         if (choice == 1 && user->entertainment == USER_ENTERTAINMENT_PLAYING)
         {
@@ -354,7 +348,6 @@ void entertainmentMenu(Box *box, User *user)
     } while (user->entertainment != USER_ENTERTAINMENT_NONE);
 }
 
-// Shopping Menu
 void shoppingMenu(Box *box, User *user)
 {
     int choice;
@@ -366,32 +359,32 @@ void shoppingMenu(Box *box, User *user)
         printf("\n1. Search Items\n2. View Shopping Cart\n3. Purchase Items\n4. Stop Shopping\n");
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
-        getchar(); // Consume newline
+        getchar();
 
         if (choice == 1)
         {
             printf("Searching for items...\n");
             user->shopping = USER_SHOPPING_SEARCHING;
-            pauseScreen(); // Only here, no need for a second one
+            pauseScreen();
         }
         else if (choice == 2)
         {
             printf("Viewing shopping cart...\n");
             user->shopping = USER_SHOPPING_CART;
-            pauseScreen(); // Only here
+            pauseScreen();
         }
         else if (choice == 3)
         {
             printf("Purchasing items...\n");
             user->shopping = USER_SHOPPING_PURCHASING;
-            pauseScreen(); // Only here
+            pauseScreen();
         }
         else if (choice == 4)
         {
             user->shopping = USER_SHOPPING_NONE;
             user->activity = USER_ACTIVITY_NONE;
             printf("Stopping shopping.\n");
-            pauseScreen(); // Only here
+            pauseScreen();
         }
 
     } while (user->shopping != USER_SHOPPING_NONE);
