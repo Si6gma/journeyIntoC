@@ -1,3 +1,5 @@
+/* Presenting pain incarnate */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -75,6 +77,7 @@ int main()
                  USER_ENTERTAINMENT_NONE,
                  USER_SHOPPING_NONE};
 
+    /* Loop forever until exit */
     while (1)
     {
         clearScreen();
