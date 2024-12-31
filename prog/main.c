@@ -1,31 +1,33 @@
-/* Presenting pain incarnate */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// Enum for the box states
 typedef enum
 {
     BOX_OFF,
     BOX_READY,
     BOX_ACTIVE
-} boxState;
+} BoxState;
 
+// Enum for the user connection states
 typedef enum
 {
     USER_DISCONNECTED,
     USER_CONNECTED,
     USER_ACTIVE
-} userState;
+} UserState;
 
+// Enum for the types of user activities
 typedef enum
 {
     USER_ACTIVITY_NONE,
     USER_ACTIVITY_ENTERTAINMENT,
     USER_ACTIVITY_SHOPPING,
     USER_ACTIVITY_MAP
-} userActivityState;
+} UserActivityState;
 
+// Enum for the types of entertainment activities
 typedef enum
 {
     USER_ENTERTAINMENT_NONE,
@@ -33,60 +35,59 @@ typedef enum
     USER_ENTERTAINMENT_PAUSE,
     USER_ENTERTAINMENT_FORWARD,
     USER_ENTERTAINMENT_REVERSE
-} userEntertainmentState;
+} UserEntertainmentState;
 
+// Enum for the types of shopping activites
 typedef enum
 {
     USER_SHOPPING_NONE,
     USER_SHOPPING_SEARCHING,
     USER_SHOPPING_CART,
     USER_SHOPPING_PURCHASING
-} userShoppingState;
+} UserShoppingState;
 
+// Structure for a Box
 typedef struct
 {
-    boxState state;
+    BoxState state;
     int connectedUsers;
 } Box;
 
+// Structure representing a User
 typedef struct
 {
     int id;
-    userState state;
-    userActivityState activity;
-    userEntertainmentState entertainment;
-    userShoppingState shopping;
+    UserState state;
+    UserActivityState activity;
+    UserEntertainmentState entertainment;
+    UserShoppingState shopping;
 } User;
 
+// Function prototypes
 void clearScreen();
 void pauseScreen();
-void displayBoxInfo(Box *box);
-void displayUserInfo(User *user);
+void displayBoxInfo(const Box *box);
+void displayUserInfo(const User *user);
 void mainMenu(Box *box, User *user);
 void userMenu(Box *box, User *user);
-void entertainmentMenu(Box *box, User *user);
-void shoppingMenu(Box *box, User *user);
-void handleUserActivity(Box *box, User *user);
+void entertainmentMenu(User *user);
+void shoppingMenu(User *user);
 
+// Main function to initialize and run the program
 int main()
 {
     Box box = {BOX_READY, 0};
-    User user = {1,
-                 USER_DISCONNECTED,
-                 USER_ACTIVITY_NONE,
-                 USER_ENTERTAINMENT_NONE,
-                 USER_SHOPPING_NONE};
+    User user = {1, USER_DISCONNECTED, USER_ACTIVITY_NONE, USER_ENTERTAINMENT_NONE, USER_SHOPPING_NONE};
 
-    /* Loop forever until exit */
     while (1)
     {
         clearScreen();
         mainMenu(&box, &user);
     }
-
     return 0;
 }
 
+// Cross-platform clear screen function
 void clearScreen()
 {
 #ifdef _WIN32
@@ -96,13 +97,15 @@ void clearScreen()
 #endif
 }
 
+// Pause screen function to wait for user input
 void pauseScreen()
 {
     printf("\nPress Enter to continue...");
     getchar();
 }
 
-void displayBoxInfo(Box *box)
+// Display information about the box
+void displayBoxInfo(const Box *box)
 {
     printf("Box State: ");
     switch (box->state)
@@ -120,7 +123,8 @@ void displayBoxInfo(Box *box)
     printf("Connected Users: %d\n", box->connectedUsers);
 }
 
-void displayUserInfo(User *user)
+// Display information about the user
+void displayUserInfo(const User *user)
 {
     printf("User ID: %d\n", user->id);
     printf("User State: ");
@@ -189,32 +193,36 @@ void displayUserInfo(User *user)
     }
 }
 
+// Main menu for program interaction
 void mainMenu(Box *box, User *user)
 {
     int choice;
     printf("==== Main Menu ====\n");
     displayBoxInfo(box);
-    printf("\n1. User Menu\n");
-    printf("2. Exit\n");
+
+    printf("\n1. User Menu");
+    printf("\n2. Exit");
     printf("\nEnter your choice: ");
-    scanf("%d", &choice);
+
+    if (scanf("%d", &choice) != 1)
+        choice = -1;
     getchar();
 
-    if (choice == 1)
+    switch (choice)
     {
+    case 1:
         userMenu(box, user);
-    }
-    else if (choice == 2)
-    {
+        break;
+    case 2:
         exit(0);
-    }
-    else
-    {
+    default:
         printf("Invalid choice! Try again.\n");
         pauseScreen();
+        break;
     }
 }
 
+// User menu with activity choices
 void userMenu(Box *box, User *user)
 {
     int choice;
@@ -223,75 +231,55 @@ void userMenu(Box *box, User *user)
         clearScreen();
         printf("==== User Menu ====\n");
         displayUserInfo(user);
-        printf("\n1. Start Activity\n");
-        printf("2. Stop Activity\n");
-        printf("3. Return to Main Menu\n");
-        printf("\nEnter your choice: ");
-        scanf("%d", &choice);
+        printf("\n1. Start Activity\n2. Stop Activity\n3. Return to Main Menu\nEnter your choice: ");
+        if (scanf("%d", &choice) != 1)
+            choice = -1;
         getchar();
 
-        if (choice == 1)
+        switch (choice)
         {
+        case 1:
             if (user->activity != USER_ACTIVITY_NONE)
             {
-                printf("You must stop the current activity before starting a new one.\n");
+                printf("Stop current activity first.\n");
                 pauseScreen();
             }
             else
             {
                 user->state = USER_ACTIVE;
-                printf("Choose an activity:\n1. Entertainment\n2. Shopping\n3. Map\n");
+                printf("Select an activity:\n1. Entertainment\n2. Shopping\n3. Map\n");
                 int activity;
-                scanf("%d", &activity);
+                if (scanf("%d", &activity) != 1)
+                    activity = -1;
                 getchar();
                 if (activity == 1)
-                {
-                    user->activity = USER_ACTIVITY_ENTERTAINMENT;
-                    user->entertainment = USER_ENTERTAINMENT_PLAYING;
-                    entertainmentMenu(box, user);
-                }
+                    entertainmentMenu(user);
                 else if (activity == 2)
-                {
-                    user->activity = USER_ACTIVITY_SHOPPING;
-                    user->shopping = USER_SHOPPING_SEARCHING;
-                    shoppingMenu(box, user);
-                }
+                    shoppingMenu(user);
                 else if (activity == 3)
-                {
-                    user->activity = USER_ACTIVITY_MAP;
-                    printf("Map activity selected.\n");
-                    pauseScreen();
-                }
+                    printf("Map selected.\n");
                 else
-                {
-                    printf("Invalid choice! Try again.\n");
-                    pauseScreen();
-                }
+                    printf("Invalid choice.\n");
             }
-        }
-        else if (choice == 2)
-        {
+            break;
+        case 2:
             user->state = USER_CONNECTED;
             user->activity = USER_ACTIVITY_NONE;
-            user->entertainment = USER_ENTERTAINMENT_NONE;
-            user->shopping = USER_SHOPPING_NONE;
-            printf("User activity stopped.\n");
+            printf("Activity stopped.\n");
             pauseScreen();
-        }
-        else if (choice == 3)
-        {
+            break;
+        case 3:
             return;
-        }
-        else
-        {
+        default:
             printf("Invalid choice! Try again.\n");
             pauseScreen();
+            break;
         }
-
     } while (1);
 }
 
-void entertainmentMenu(Box *box, User *user)
+// Menu for entertainment-related options
+void entertainmentMenu(User *user)
 {
     int choice;
     do
@@ -299,59 +287,38 @@ void entertainmentMenu(Box *box, User *user)
         clearScreen();
         printf("==== Entertainment Menu ====\n");
         displayUserInfo(user);
-        printf("\n1. Play\n2. Pause\n3. Forward\n4. Reverse\n5. Stop Entertainment\n");
-        printf("\nEnter your choice: ");
-        scanf("%d", &choice);
+        printf("\n1. Play\n2. Pause\n3. Forward\n4. Reverse\n5. Stop Entertainment\nEnter your choice: ");
+        if (scanf("%d", &choice) != 1)
+            choice = -1;
         getchar();
 
-        if (choice == 1 && user->entertainment == USER_ENTERTAINMENT_PLAYING)
+        switch (choice)
         {
-            printf("You are already playing.\n");
-        }
-        else if (choice == 1)
-        {
+        case 1:
             user->entertainment = USER_ENTERTAINMENT_PLAYING;
-            printf("Playing entertainment...\n");
-        }
-        else if (choice == 2 && user->entertainment == USER_ENTERTAINMENT_PAUSE)
-        {
-            printf("You are already paused.\n");
-        }
-        else if (choice == 2)
-        {
+            break;
+        case 2:
             user->entertainment = USER_ENTERTAINMENT_PAUSE;
-            printf("Entertainment paused.\n");
-        }
-        else if (choice == 3 && user->entertainment == USER_ENTERTAINMENT_FORWARD)
-        {
-            printf("You are already forwarding.\n");
-        }
-        else if (choice == 3)
-        {
+            break;
+        case 3:
             user->entertainment = USER_ENTERTAINMENT_FORWARD;
-            printf("Forwarding entertainment...\n");
-        }
-        else if (choice == 4 && user->entertainment == USER_ENTERTAINMENT_REVERSE)
-        {
-            printf("You are already reversing.\n");
-        }
-        else if (choice == 4)
-        {
+            break;
+        case 4:
             user->entertainment = USER_ENTERTAINMENT_REVERSE;
-            printf("Reversing entertainment...\n");
-        }
-        else if (choice == 5)
-        {
+            break;
+        case 5:
             user->entertainment = USER_ENTERTAINMENT_NONE;
-            user->activity = USER_ACTIVITY_NONE;
-            printf("Stopping entertainment.\n");
+            return;
+        default:
+            printf("Invalid choice! Try again.\n");
+            break;
         }
-
         pauseScreen();
-    } while (user->entertainment != USER_ENTERTAINMENT_NONE);
+    } while (1);
 }
 
-void shoppingMenu(Box *box, User *user)
+// Menu for shopping-related options
+void shoppingMenu(User *user)
 {
     int choice;
     do
@@ -359,36 +326,29 @@ void shoppingMenu(Box *box, User *user)
         clearScreen();
         printf("==== Shopping Menu ====\n");
         displayUserInfo(user);
-        printf("\n1. Search Items\n2. View Shopping Cart\n3. Purchase Items\n4. Stop Shopping\n");
-        printf("\nEnter your choice: ");
-        scanf("%d", &choice);
+        printf("\n1. Search Items\n2. View Cart\n3. Purchase\n4. Stop Shopping\nEnter your choice: ");
+        if (scanf("%d", &choice) != 1)
+            choice = -1;
         getchar();
 
-        if (choice == 1)
+        switch (choice)
         {
-            printf("Searching for items...\n");
+        case 1:
             user->shopping = USER_SHOPPING_SEARCHING;
-            pauseScreen();
-        }
-        else if (choice == 2)
-        {
-            printf("Viewing shopping cart...\n");
+            break;
+        case 2:
             user->shopping = USER_SHOPPING_CART;
-            pauseScreen();
-        }
-        else if (choice == 3)
-        {
-            printf("Purchasing items...\n");
+            break;
+        case 3:
             user->shopping = USER_SHOPPING_PURCHASING;
-            pauseScreen();
-        }
-        else if (choice == 4)
-        {
+            break;
+        case 4:
             user->shopping = USER_SHOPPING_NONE;
-            user->activity = USER_ACTIVITY_NONE;
-            printf("Stopping shopping.\n");
-            pauseScreen();
+            return;
+        default:
+            printf("Invalid choice! Try again.\n");
+            break;
         }
-
-    } while (user->shopping != USER_SHOPPING_NONE);
+        pauseScreen();
+    } while (1);
 }
