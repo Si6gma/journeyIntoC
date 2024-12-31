@@ -2,33 +2,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Alpha
+typedef struct Alpha
 {
     char letter;
     struct Alpha *next;
     struct AlphaList *head;
-};
+} Alpha;
 
-struct AlphaList
+typedef struct AlphaList
 {
     char *word;
     struct AlphaList *next;
-};
+} AlphaList;
 
 // Function Prototypes
-struct Alpha *createAlpha(char letter);
-struct AlphaList *createAlphaList(const char *word);
-void initializeAlpha(struct Alpha **head, char letters[], int arraySize);
-void initializeAlphaList(struct Alpha **alphaHead, const char *words[], int numOfWords);
-void printAlpha(struct Alpha *head);
-void deleteAlpha(struct Alpha **head);
-void deleteAlphaList(struct AlphaList **head);
-void sortAlphaList(struct AlphaList **head);
-void sortAlpha(struct Alpha **head);
+Alpha *createAlpha(char letter);
+AlphaList *createAlphaList(const char *word);
+void initializeAlpha(Alpha **head, char letters[], int arraySize);
+void initializeAlphaList(Alpha **alphaHead, const char *words[], int numOfWords);
+void printAlpha(Alpha *head);
+void deleteAlpha(Alpha **head);
+void deleteAlphaList(AlphaList **head);
+void sortAlphaList(AlphaList **head);
+void sortAlpha(Alpha **head);
 
-struct Alpha *createAlpha(char letter)
+Alpha *createAlpha(char letter)
 {
-    struct Alpha *newNode = (struct Alpha *)malloc(sizeof(struct Alpha));
+    Alpha *newNode = (Alpha *)malloc(sizeof(Alpha));
 
     if (newNode == NULL)
     { // Edge Case: Memory allocation failed
@@ -42,9 +42,9 @@ struct Alpha *createAlpha(char letter)
     return newNode;
 }
 
-struct AlphaList *createAlphaList(const char *word)
+AlphaList *createAlphaList(const char *word)
 {
-    struct AlphaList *newNode = (struct AlphaList *)malloc(sizeof(struct AlphaList));
+    AlphaList *newNode = (AlphaList *)malloc(sizeof(AlphaList));
 
     if (newNode == NULL)
     { // Edge Case: Memory allocation failed
@@ -64,11 +64,11 @@ struct AlphaList *createAlphaList(const char *word)
     return newNode;
 }
 
-void initializeAlphaList(struct Alpha **alphaHead, const char *words[], int numOfWords)
+void initializeAlphaList(Alpha **alphaHead, const char *words[], int numOfWords)
 {
     for (int i = 0; i < numOfWords; i++)
     {
-        struct Alpha *current = *alphaHead;
+        Alpha *current = *alphaHead;
         char firstLetter = words[i][0];
 
         // Find the Alpha node that corresponds to the first letter of the word
@@ -80,7 +80,7 @@ void initializeAlphaList(struct Alpha **alphaHead, const char *words[], int numO
         // If the corresponding Alpha node is found, add the word to its AlphaList
         if (current != NULL)
         {
-            struct AlphaList *newWordNode = createAlphaList(words[i]);
+            AlphaList *newWordNode = createAlphaList(words[i]);
             if (newWordNode == NULL)
             {
                 printf("Failed to allocate memory for word '%s'.\n", words[i]);
@@ -94,7 +94,7 @@ void initializeAlphaList(struct Alpha **alphaHead, const char *words[], int numO
             }
             else
             {
-                struct AlphaList *temp = current->head;
+                AlphaList *temp = current->head;
                 while (temp->next != NULL)
                 {
                     temp = temp->next;
@@ -105,16 +105,16 @@ void initializeAlphaList(struct Alpha **alphaHead, const char *words[], int numO
     }
 }
 
-void initializeAlpha(struct Alpha **head, char letters[], int arraySize)
+void initializeAlpha(Alpha **head, char letters[], int arraySize)
 {
     if (arraySize <= 0)
         return;
 
-    struct Alpha *current = NULL;
+    Alpha *current = NULL;
 
     for (int i = 0; i < arraySize; i++)
     {
-        struct Alpha *newNode = createAlpha(letters[i]);
+        Alpha *newNode = createAlpha(letters[i]);
 
         if (newNode == NULL)
         {
@@ -136,14 +136,14 @@ void initializeAlpha(struct Alpha **head, char letters[], int arraySize)
     }
 }
 
-void sortAlphaList(struct AlphaList **head)
+void sortAlphaList(AlphaList **head)
 {
     if (*head == NULL || (*head)->next == NULL)
         return;
 
     int swapped;
-    struct AlphaList *current;
-    struct AlphaList *lastSorted = NULL;
+    AlphaList *current;
+    AlphaList *lastSorted = NULL;
 
     do
     {
@@ -162,7 +162,7 @@ void sortAlphaList(struct AlphaList **head)
             else if (strcmp(current->word, current->next->word) == 0)
             {
                 // If duplicate, remove the next node
-                struct AlphaList *duplicateNode = current->next;
+                AlphaList *duplicateNode = current->next;
                 current->next = current->next->next;
                 free(duplicateNode->word);
                 free(duplicateNode);
@@ -176,21 +176,21 @@ void sortAlphaList(struct AlphaList **head)
     } while (swapped);
 }
 
-void sortAlpha(struct Alpha **head)
+void sortAlpha(Alpha **head)
 {
     if (*head == NULL || (*head)->next == NULL)
         return;
 
-    struct Alpha *sorted = NULL;
+    Alpha *sorted = NULL;
 
     // Bubble sort for Alpha nodes
-    struct Alpha *current = *head;
+    Alpha *current = *head;
     while (current != NULL)
     {
         // Sort the AlphaList for this Alpha node
         sortAlphaList(&current->head);
 
-        struct Alpha *next = current->next;
+        Alpha *next = current->next;
 
         // Insert current node into sorted list
         if (sorted == NULL || current->letter < sorted->letter)
@@ -200,7 +200,7 @@ void sortAlpha(struct Alpha **head)
         }
         else
         {
-            struct Alpha *temp = sorted;
+            Alpha *temp = sorted;
             while (temp->next != NULL && temp->next->letter < current->letter)
             {
                 temp = temp->next;
@@ -216,7 +216,7 @@ void sortAlpha(struct Alpha **head)
     *head = sorted;
 }
 
-void printAlpha(struct Alpha *head)
+void printAlpha(Alpha *head)
 {
     if (head == NULL)
     {
@@ -229,7 +229,7 @@ void printAlpha(struct Alpha *head)
         printf("%c", head->letter);
         if (head->head != NULL)
         {
-            struct AlphaList *currentList = head->head;
+            AlphaList *currentList = head->head;
             printf(" -> ");
             while (currentList != NULL)
             {
@@ -246,9 +246,9 @@ void printAlpha(struct Alpha *head)
     }
 }
 
-void deleteAlphaList(struct AlphaList **head)
+void deleteAlphaList(AlphaList **head)
 {
-    struct AlphaList *temp;
+    AlphaList *temp;
 
     if (*head == NULL)
         return;
@@ -264,9 +264,9 @@ void deleteAlphaList(struct AlphaList **head)
     *head = NULL;
 }
 
-void deleteAlpha(struct Alpha **head)
+void deleteAlpha(Alpha **head)
 {
-    struct Alpha *temp;
+    Alpha *temp;
 
     if (*head == NULL)
         return;
@@ -313,19 +313,18 @@ int main()
         "Rain", "Tunnel", "Key", "Bamboo", "Quartz",
         "Bottle", "Dolphin", "Question", "Stone", "Apple",
         "Road", "Echo", "Ink", "Journey", "Queen"};
+
     int numOfWords = sizeof(words) / sizeof(words[0]);
 
-    struct Alpha *alphaHead = NULL;
+    Alpha *alphaHead = NULL;
+
     initializeAlpha(&alphaHead, alphabet, numOfAlphabet);
     initializeAlphaList(&alphaHead, words, numOfWords);
 
     sortAlpha(&alphaHead);
-    printf("\nArray: \n\n");
-    for (int i = 0; i < numOfWords; i++)
-        printf("%s, ", words[i]);
 
-    printf("\n\nList: \n\n");
     printAlpha(alphaHead);
+
     deleteAlpha(&alphaHead);
 
     return 0;
