@@ -1,5 +1,66 @@
-.vscode
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
+# macOS
 .DS_Store
+._*
 
-*.dSYM
+# Compiled Object files
+*.o
+*.obj
+*.elf
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Build directories
+build/
+bin/
+out/
+!out/.gitkeep
+
+# Dependency files
+*.d
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Test binaries
+test/
+*.test
+
+# Coverage files
+*.gcno
+*.gcda
+*.gcov
+
+# Core dumps
+core
+core.*
+vcore.*
